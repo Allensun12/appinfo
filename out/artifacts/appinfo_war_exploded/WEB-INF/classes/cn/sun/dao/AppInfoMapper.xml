@@ -1,0 +1,174 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.sun.dao.AppInfoMapper">
+    <resultMap id="appInfo" type="cn.sun.pojo.AppInfo">
+        <id column="id" property="id"/>
+        <result column="softwareName" property="softwareName"/>
+        <result column="APKName" property="apkName"/>
+        <result column="supportROM" property="supportRom"/>
+        <result column="interfaceLanguage" property="interfaceLanguage"/>
+        <result column="softwareSize" property="softwareSize"/>
+        <result column="updateDate" property="updateDate"/>
+        <result column="devId" property="devId"/>
+        <result column="appInfo" property="appInfo"/>
+        <result column="status" property="status"/>
+        <result column="onSaleDate" property="onSaleDate"/>
+        <result column="offSaleDate" property="offSaleDate"/>
+        <result column="flatformId" property="flatformId"/>
+        <result column="categoryLevel3" property="categoryLevel3"/>
+        <result column="downloads" property="downloads"/>
+        <result column="createdBy" property="createdBy"/>
+        <result column="creationDate" property="creationDate"/>
+        <result column="modifyBy" property="modifyBy"/>
+        <result column="modifyDate" property="modifyDate"/>
+        <result column="categoryLevel1" property="categoryLevel1"/>
+        <result column="categoryLevel2" property="categoryLevel2"/>
+        <result column="logoPicPath" property="logoPicPath"/>
+        <result column="logoLocPath" property="logoLocPath"/>
+        <result column="versionId" property="versionId"/>
+    </resultMap>
+    <resultMap id="appInfoExt" type="cn.sun.pojo.ext.ExtAppInfo" extends="appInfo">
+        <!--app开发者信息-->
+        <association property="devUser" javaType="cn.sun.pojo.DevUser">
+            <id column="id" property="id"/>
+            <result column="devCode" property="devCode"/>
+            <result column="devName" property="devName"/>
+            <result column="devPassword" property="devPassword"/>
+            <result column="devEmail" property="devEmail"/>
+            <result column="devInfo" property="devInfo"/>
+            <result column="createdBy" property="createdBy"/>
+            <result column="creationDate" property="creationDate"/>
+            <result column="modifyBy" property="modifyBy"/>
+            <result column="modifyDate" property="modifyDate"/>
+        </association>
+        <!--app一级分类数据字典-->
+        <association property="appCategoryLevel1" javaType="cn.sun.pojo.AppCategory">
+            <id column="id" property="id"/>
+            <result column="categoryCode" property="categoryCode"/>
+            <result column="categoryName" property="categoryName"/>
+            <result column="parentId" property="parentId"/>
+            <result column="createdBy" property="createdBy"/>
+            <result column="creationTime" property="creationTime"/>
+            <result column="modifyBy" property="modifyBy"/>
+            <result column="modifyDate" property="modifyDate"/>
+        </association>
+        <!--app二级分类数据字典-->
+        <association property="appCategoryLevel2" javaType="cn.sun.pojo.AppCategory">
+            <id column="id" property="id"/>
+            <result column="categoryCode" property="categoryCode"/>
+            <result column="categoryName" property="categoryName"/>
+            <result column="parentId" property="parentId"/>
+            <result column="createdBy" property="createdBy"/>
+            <result column="creationTime" property="creationTime"/>
+            <result column="modifyBy" property="modifyBy"/>
+            <result column="modifyDate" property="modifyDate"/>
+        </association>
+        <!--app三级分类数据字典-->
+        <association property="appCategoryLevel3" javaType="cn.sun.pojo.AppCategory">
+            <id column="id" property="id"/>
+            <result column="categoryCode" property="categoryCode"/>
+            <result column="categoryName" property="categoryName"/>
+            <result column="parentId" property="parentId"/>
+            <result column="createdBy" property="createdBy"/>
+            <result column="creationTime" property="creationTime"/>
+            <result column="modifyBy" property="modifyBy"/>
+            <result column="modifyDate" property="modifyDate"/>
+        </association>
+        <!--app状态数据字典-->
+        <association property="appStatus" javaType="cn.sun.pojo.DataDictionary">
+            <id column="id" property="id"/>
+            <result column="typeCode" property="typeCode"/>
+            <result column="typeName" property="typeName"/>
+            <result column="valueId" property="valueId"/>
+            <result column="valueName" property="valueName"/>
+            <result column="createdBy" property="createdBy"/>
+            <result column="creationDate" property="creationDate"/>
+            <result column="modifyBy" property="modifyBy"/>
+            <result column="modifyDate" property="modifyDate"/>
+        </association>
+        <!--平台数据字典-->
+        <association property="appFlatform" javaType="cn.sun.pojo.DataDictionary">
+            <id column="id" property="id"/>
+            <result column="typeCode" property="typeCode"/>
+            <result column="typeName" property="typeName"/>
+            <result column="valueId" property="valueId"/>
+            <result column="valueName" property="valueName"/>
+            <result column="createdBy" property="createdBy"/>
+            <result column="creationDate" property="creationDate"/>
+            <result column="modifyBy" property="modifyBy"/>
+            <result column="modifyDate" property="modifyDate"/>
+        </association>
+        <!--版本信息表-->
+        <collection property="versionList" ofType="cn.sun.pojo.AppVersion">
+            <id column="id" property="id"/>
+            <result column="appId" property="appId"/>
+            <result column="versionNo" property="versionNo"/>
+            <result column="versionInfo" property="versionInfo"/>
+            <result column="publishStatus" property="publishStatus"/>
+            <result column="downloadLink" property="downloadLink"/>
+            <result column="versionSize" property="versionSize"/>
+            <result column="createdBy" property="createdBy"/>
+            <result column="creationDate" property="creationDate"/>
+            <result column="modifyBy" property="modifyBy"/>
+            <result column="modifyDate" property="modifyDate"/>
+            <result column="apkLocPath" property="apkLocPath"/>
+            <result column="apkFileName" property="apkFileName"/>
+        </collection>
+    </resultMap>
+    <select id="getTotalRecord"  resultType="java.lang.Integer">
+        SELECT count(1) FROM
+        `app_info` a LEFT JOIN `app_version` v ON a.id=v.appId
+        LEFT JOIN `dev_user` d ON a.`devId`=d.`id`,
+        `data_dictionary` dic,`data_dictionary` dic2,
+        `app_category` c1,`app_category` c2,`app_category` c3
+        WHERE dic.typeCode='APP_FLATFORM' AND dic.valueId=a.flatformId
+        AND dic2.typeCode='APP_STATUS' AND dic2.valueId=a.`status` and dic2.valueId=1
+        AND c1.id=categoryLevel1 AND c1.parentId IS NULL
+        AND c2.id=categoryLevel2 AND c2.parentId=categoryLevel1
+        AND c3.id=categoryLevel3 AND c3.parentId=categoryLevel2
+        <if test="appInfo.softwareName!=null and appInfo.softwareName!=''">
+            AND a.softwareName LIKE concat('%',#{appInfo.softwareName},'%')
+        </if>
+        <if test="appInfo.flatformId!=null and appInfo.flatformId!=0">
+            AND a.flatformId=#{appInfo.flatformId}
+        </if>
+        <if test="appInfo.categoryLevel1!=null and appInfo.categoryLevel1!=0">
+            AND a.categoryLevel1=#{appInfo.categoryLevel1}
+        </if>
+        <if test="appInfo.categoryLevel2!=null and appInfo.categoryLevel2!=0">
+            AND a.categoryLevel2=#{appInfo.categoryLevel2}
+        </if>
+        <if test="appInfo.categoryLevel3!=null and appInfo.categoryLevel3!=0">
+            AND a.categoryLevel3=#{appInfo.categoryLevel3}
+        </if>
+    </select>
+    <select id="getAppInfoList"  resultMap="appInfoExt">
+        SELECT * FROM
+        `app_info` a LEFT JOIN `app_version` v ON a.id=v.appId
+        LEFT JOIN `dev_user` d ON a.`devId`=d.`id`,
+        `data_dictionary` dic,`data_dictionary` dic2,
+        `app_category` c1,`app_category` c2,`app_category` c3
+        WHERE dic.typeCode='APP_FLATFORM' AND dic.valueId=a.flatformId
+        AND dic2.typeCode='APP_STATUS' AND dic2.valueId=a.`status` and dic2.valueId=1
+        AND c1.id=categoryLevel1 AND c1.parentId IS NULL
+        AND c2.id=categoryLevel2 AND c2.parentId=categoryLevel1
+        AND c3.id=categoryLevel3 AND c3.parentId=categoryLevel2
+        <if test="appInfo.softwareName!=null and appInfo.softwareName!=''">
+            AND a.softwareName LIKE concat('%',#{appInfo.softwareName},'%')
+        </if>
+        <if test="appInfo.flatformId!=null and appInfo.flatformId!=0">
+            AND a.flatformId=#{appInfo.flatformId}
+        </if>
+        <if test="appInfo.categoryLevel1!=null and appInfo.categoryLevel1!=0">
+            AND a.categoryLevel1=#{appInfo.categoryLevel1}
+        </if>
+        <if test="appInfo.categoryLevel2!=null and appInfo.categoryLevel2!=0">
+            AND a.categoryLevel2=#{appInfo.categoryLevel2}
+        </if>
+        <if test="appInfo.categoryLevel3!=null and appInfo.categoryLevel3!=0">
+            AND a.categoryLevel3=#{appInfo.categoryLevel3}
+        </if>
+        limit #{pageIndex},#{pageSize}
+    </select>
+</mapper>

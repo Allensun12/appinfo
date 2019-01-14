@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!--springMVC.xml 中主要是 自动扫描控制器，注解的启动，视图模式 这三个-->
+    <!-- 自动扫描该controller包，使SpringMVC认为包下的用了@controller注解的类是控制器 -->
+    <context:component-scan base-package="cn.sun.controller"/>
+
+    <!-- 扩充了注解驱动，可以将请求参数绑定到控制器方法参数 -->
+    <mvc:annotation-driven/>
+
+    <!-- 静态资源处理  css js imgs : 设置静态资源释放，让WEB-INF中的资源能访问其外的东西-->
+    <!--<mvc:resources location="/WEB-INF/pages/**" mapping="/resources"/>-->
+    <mvc:default-servlet-handler/>
+
+    <!-- 定义跳转的文件的前后缀 ，视图模式配置-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+          <property name="prefix" value="/WEB-INF/jsp/"/>
+          <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!--设置文件上传-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!--设置允许上传的文件最大字节数据-->
+        <!-- <property name="maxUploadSize" value="1024000"/>-->
+        <!--设置文件上传的编码方式-->
+        <property name="defaultEncoding" value="utf-8"/>
+    </bean>
+</beans>

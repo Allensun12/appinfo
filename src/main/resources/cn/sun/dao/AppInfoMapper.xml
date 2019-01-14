@@ -1,0 +1,89 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.sun.dao.AppInfoMapper">
+    <resultMap id="appInfo" type="cn.sun.pojo.AppInfo">
+        <id column="id" property="id"/>
+        <result column="softwareName" property="softwareName"/>
+        <result column="APKName" property="apkName"/>
+        <result column="supportROM" property="supportRom"/>
+        <result column="interfaceLanguage" property="interfaceLanguage"/>
+        <result column="softwareSize" property="softwareSize"/>
+        <result column="updateDate" property="updateDate"/>
+        <result column="devId" property="devId"/>
+        <result column="appInfo" property="appInfo"/>
+        <result column="status" property="status"/>
+        <result column="onSaleDate" property="onSaleDate"/>
+        <result column="offSaleDate" property="offSaleDate"/>
+        <result column="flatformId" property="flatformId"/>
+        <result column="categoryLevel3" property="categoryLevel3"/>
+        <result column="downloads" property="downloads"/>
+        <result column="createdBy" property="createdBy"/>
+        <result column="creationDate" property="creationDate"/>
+        <result column="modifyBy" property="modifyBy"/>
+        <result column="modifyDate" property="modifyDate"/>
+        <result column="categoryLevel1" property="categoryLevel1"/>
+        <result column="categoryLevel2" property="categoryLevel2"/>
+        <result column="logoPicPath" property="logoPicPath"/>
+        <result column="logoLocPath" property="logoLocPath"/>
+        <result column="versionId" property="versionId"/>
+    </resultMap>
+    <resultMap id="appInfoExt" type="cn.sun.pojo.ext.AppInfoExt" extends="appInfo">
+        <result column="devlName" property="devlName"/>
+        <result column="appStatus" property="appStatus"/>
+        <result column="flatformName" property="flatformName"/>
+        <result column="level1" property="level1"/>
+        <result column="level2" property="level2"/>
+        <result column="level3" property="level3"/>
+        <result column="versionNo" property="versionNo"/>
+    </resultMap>
+    <select id="getTotalRecord"  resultType="java.lang.Integer">
+        SELECT  count(1) FROM `appinfodb`.`app_info` AS a
+        where a.`status`=1
+        <if test="appInfo.softwareName!=null and appInfo.softwareName!=''">
+            AND a.softwareName LIKE concat('%',#{appInfo.softwareName},'%')
+        </if>
+        <if test="appInfo.flatformId!=null and appInfo.flatformId!=0">
+            AND a.flatformId=#{appInfo.flatformId}
+        </if>
+        <if test="appInfo.categoryLevel1!=null and appInfo.categoryLevel1!=0">
+            AND a.categoryLevel1=#{appInfo.categoryLevel1}
+        </if>
+        <if test="appInfo.categoryLevel2!=null and appInfo.categoryLevel2!=0">
+            AND a.categoryLevel2=#{appInfo.categoryLevel2}
+        </if>
+        <if test="appInfo.categoryLevel3!=null and appInfo.categoryLevel3!=0">
+            AND a.categoryLevel3=#{appInfo.categoryLevel3}
+        </if>
+    </select>
+    <select id="getAppInfoList"  resultMap="appInfoExt">
+        SELECT  `id`,`softwareName`,`APKName`, `supportROM`, `interfaceLanguage`,`softwareSize`, `updateDate`,
+        `devId`,`appInfo`,`status`,`onSaleDate`, `offSaleDate`,`flatformId`,`downloads`,`createdBy`,`creationDate`,
+        `modifyBy`, `modifyDate`,`categoryLevel1`,`categoryLevel2`,`logoPicPath`,`logoLocPath`,`versionId`,
+        (SELECT devName FROM `dev_user` WHERE `devId`=`dev_user`.`id`) AS devlName ,
+        (SELECT valueName FROM `data_dictionary` WHERE `data_dictionary`.typeCode='APP_STATUS' AND `data_dictionary`.valueId=`status`) AS appStatus,
+        (SELECT valueName FROM `data_dictionary` WHERE data_dictionary.typeCode='APP_FLATFORM' AND data_dictionary.valueId=flatformId) flatformName,
+        (SELECT categoryName FROM `app_category` WHERE id=categoryLevel1 ) AS level1 ,
+        (SELECT categoryName FROM `app_category` WHERE id=categoryLevel2 ) AS level2 ,
+        (SELECT categoryName FROM `app_category` WHERE id=categoryLevel3 ) AS level3 ,
+        (SELECT versionNo FROM `app_version`     WHERE id=versionId) AS versionNo
+        FROM `appinfodb`.`app_info` AS a
+        where a.`status`=1
+        <if test="appInfo.softwareName!=null and appInfo.softwareName!=''">
+            AND a.softwareName LIKE concat('%',#{appInfo.softwareName},'%')
+        </if>
+        <if test="appInfo.flatformId!=null and appInfo.flatformId!=0">
+            AND a.flatformId=#{appInfo.flatformId}
+        </if>
+        <if test="appInfo.categoryLevel1!=null and appInfo.categoryLevel1!=0">
+            AND a.categoryLevel1=#{appInfo.categoryLevel1}
+        </if>
+        <if test="appInfo.categoryLevel2!=null and appInfo.categoryLevel2!=0">
+            AND a.categoryLevel2=#{appInfo.categoryLevel2}
+        </if>
+        <if test="appInfo.categoryLevel3!=null and appInfo.categoryLevel3!=0">
+            AND a.categoryLevel3=#{appInfo.categoryLevel3}
+        </if>
+        limit #{pageIndex},#{pageSize}
+    </select>
+</mapper>

@@ -1,0 +1,8 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.sun.dao.BackendUserMapper">
+    <select id="getBackendUser" parameterType="java.lang.String" resultType="cn.sun.pojo.BackendUser">
+        select * from backend_user where userCode=#{code}
+    </select>
+</mapper>
